@@ -28,6 +28,7 @@ fun Project.configureDependencies() {
     }
     
     repositories {
+        mavenLocal()
         mavenCentral()
         gradlePluginPortal()
         maven("https://maven.fabricmc.net/") {
@@ -47,6 +48,25 @@ fun Project.configureDependencies() {
         }
         maven("https://jitpack.io") {
             name = "JitPack"
+        }
+        maven("https://maven.aliyun.com/repository/public")
+        maven("https://repo.opencollab.dev/maven-releases")
+        maven("https://repo.opencollab.dev/maven-snapshots")
+        maven {
+            name = "AliYun-Release"
+            url = uri("https://packages.aliyun.com/maven/repository/2421751-release-ZmwRAc/")
+            credentials {
+                username = project.findProperty("aliyun.package.user") as String? ?: System.getenv("ALY_USER")
+                password = project.findProperty("aliyun.package.password") as String? ?: System.getenv("ALY_PASSWORD")
+            }
+        }
+        maven {
+            name = "AliYun-Snapshot"
+            url = uri("https://packages.aliyun.com/maven/repository/2421751-snapshot-i7Aufp/")
+            credentials {
+                username = project.findProperty("aliyun.package.user") as String? ?: System.getenv("ALY_USER")
+                password = project.findProperty("aliyun.package.password") as String? ?: System.getenv("ALY_PASSWORD")
+            }
         }
     }
     

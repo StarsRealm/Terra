@@ -1,7 +1,8 @@
-package com.dfsek.terra.bukkit.nms.v1_20_R3;
+package com.dfsek.terra.bukkit.nms;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelHeightAccessor;
@@ -19,14 +20,17 @@ import net.minecraft.world.level.levelgen.GenerationStep.Carving;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
-import org.bukkit.craftbukkit.v1_20_R3.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.function.Function;
 
 import com.dfsek.terra.api.config.ConfigPack;
 import com.dfsek.terra.api.world.biome.generation.BiomeProvider;
@@ -38,6 +42,25 @@ import com.dfsek.terra.bukkit.world.block.data.BukkitBlockState;
 
 public class NMSChunkGeneratorDelegate extends ChunkGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(NMSChunkGeneratorDelegate.class);
+    private static final Method codec;
+    static {
+        try {
+            codec = ChunkGenerator.class.getDeclaredMethod("codec");
+            codec.setAccessible(true);
+        } catch(NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static final MapCodec<ChunkGenerator> nmsChunkGeneratorMapCodec = BuiltInRegistries.CHUNK_GENERATOR.byNameCodec().dispatchMap(
+        c -> {
+            try {
+                return (MapCodec<? extends ChunkGenerator>) codec.invoke(c);
+            } catch(IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        }, Function.identity());
+
     private final com.dfsek.terra.api.world.chunk.generation.ChunkGenerator delegate;
 
     private final ChunkGenerator vanilla;
@@ -54,8 +77,8 @@ public class NMSChunkGeneratorDelegate extends ChunkGenerator {
     }
 
     @Override
-    protected @NotNull Codec<? extends ChunkGenerator> codec() {
-        return ChunkGenerator.CODEC;
+    protected @NotNull MapCodec<? extends ChunkGenerator> codec() {
+        return nmsChunkGeneratorMapCodec;
     }
 
     @Override
@@ -166,6 +189,5 @@ public class NMSChunkGeneratorDelegate extends ChunkGenerator {
 
     @Override
     public void addDebugScreenInfo(@NotNull List<String> text, @NotNull RandomState noiseConfig, @NotNull BlockPos pos) {
-
     }
 }

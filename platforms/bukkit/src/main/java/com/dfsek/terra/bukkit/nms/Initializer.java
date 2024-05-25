@@ -1,6 +1,5 @@
 package com.dfsek.terra.bukkit.nms;
 
-import org.bukkit.Bukkit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,13 +7,12 @@ import com.dfsek.terra.bukkit.PlatformImpl;
 
 
 public interface Initializer {
-    String NMS = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-    String TERRA_PACKAGE = Initializer.class.getPackageName();
+    String NMS = "com.dfsek.terra.bukkit.nms.NMSInitializer";
 
     static boolean init(PlatformImpl platform) {
         Logger logger = LoggerFactory.getLogger(Initializer.class);
         try {
-            Class<?> initializerClass = Class.forName(TERRA_PACKAGE + "." + NMS + ".NMSInitializer");
+            Class<?> initializerClass = Class.forName(NMS);
             try {
                 Initializer initializer = (Initializer) initializerClass.getConstructor().newInstance();
                 initializer.initialize(platform);

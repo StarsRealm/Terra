@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import io.papermc.paperweight.util.path
 import java.io.File
 import java.io.FileWriter
 import java.net.URL
@@ -46,7 +45,7 @@ fun Project.configureDistribution() {
         
         doLast {
             // https://github.com/johnrengelman/shadow/issues/111
-            val dest = tasks.named<ShadowJar>("shadowJar").get().archiveFile.get().path
+            val dest = tasks.named<ShadowJar>("shadowJar").get().archiveFile.get().asFile.toPath()
             
             
             FileSystems.newFileSystem(dest, mapOf("create" to "false"), null).use { fs ->

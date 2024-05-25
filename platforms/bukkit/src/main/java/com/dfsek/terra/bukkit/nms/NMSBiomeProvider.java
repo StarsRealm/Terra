@@ -1,13 +1,17 @@
-package com.dfsek.terra.bukkit.nms.v1_20_R3;
+package com.dfsek.terra.bukkit.nms;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate.Sampler;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.dfsek.terra.api.world.biome.generation.BiomeProvider;
@@ -15,6 +19,25 @@ import com.dfsek.terra.bukkit.world.BukkitPlatformBiome;
 
 
 public class NMSBiomeProvider extends BiomeSource {
+    private static final Method codec;
+    static {
+        try {
+            codec = BiomeSource.class.getDeclaredMethod("codec");
+            codec.setAccessible(true);
+        } catch(NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static final MapCodec<BiomeSource> nmsBiomeMapCodec = BuiltInRegistries.BIOME_SOURCE.byNameCodec().dispatchMap(
+        b -> {
+            try {
+                return (MapCodec<? extends BiomeSource>) codec.invoke(b);
+            } catch(IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        }, Function.identity());
+
     private final BiomeProvider delegate;
     private final long seed;
     private final Registry<Biome> biomeRegistry = RegistryFetcher.biomeRegistry();
@@ -35,8 +58,8 @@ public class NMSBiomeProvider extends BiomeSource {
     }
 
     @Override
-    protected @NotNull Codec<? extends BiomeSource> codec() {
-        return BiomeSource.CODEC;
+    protected @NotNull MapCodec<? extends BiomeSource> codec() {
+        return nmsBiomeMapCodec;
     }
 
     @Override
