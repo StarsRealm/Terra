@@ -19,7 +19,7 @@ dependencies {
     shadedApi(project(":common:implementation:base"))
     shadedApi("com.google.guava", "guava", Versions.Libraries.Internal.guava)
     shadedApi("cloud.commandframework", "cloud-paper", Versions.Libraries.cloud)
-    implementation("xyz.jpenilla", "reflection-remapper", Versions.Bukkit.reflectionRemapper)
+    shadedApi("xyz.jpenilla", "reflection-remapper", Versions.Bukkit.reflectionRemapper)
 }
 
 tasks {

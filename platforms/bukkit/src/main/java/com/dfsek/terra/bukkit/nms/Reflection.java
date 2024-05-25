@@ -20,7 +20,7 @@ public class Reflection {
     public static final ReferenceProxy REFERENCE;
 
     static {
-        ReflectionRemapper reflectionRemapper = ReflectionRemapper.forReobfMappingsInPaperJar();
+        ReflectionRemapper reflectionRemapper = ReflectionRemapper.noop();
         ReflectionProxyFactory reflectionProxyFactory = ReflectionProxyFactory.create(reflectionRemapper,
             Reflection.class.getClassLoader());
 
