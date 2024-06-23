@@ -17,9 +17,10 @@
 
 package com.dfsek.terra.bukkit;
 
+import cloud.commandframework.SenderMapper;
 import cloud.commandframework.brigadier.CloudBrigadierManager;
 import cloud.commandframework.bukkit.CloudBukkitCapabilities;
-import cloud.commandframework.execution.CommandExecutionCoordinator;
+import cloud.commandframework.execution.ExecutionCoordinator;
 import cloud.commandframework.paper.PaperCommandManager;
 import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
@@ -93,9 +94,9 @@ public class TerraBukkitPlugin extends JavaPlugin {
     @NotNull
     private PaperCommandManager<CommandSender> getCommandSenderPaperCommandManager() throws Exception {
         PaperCommandManager<CommandSender> commandManager = new PaperCommandManager<>(this,
-            CommandExecutionCoordinator.simpleCoordinator(),
-            BukkitAdapter::adapt,
-            BukkitAdapter::adapt);
+            ExecutionCoordinator.simpleCoordinator(),
+            SenderMapper.create(BukkitAdapter::adapt, BukkitAdapter::adapt)
+        );
         if(commandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
             commandManager.registerBrigadier();
             final CloudBrigadierManager<?, ?> brigManager = commandManager.brigadierManager();
@@ -189,7 +190,7 @@ public class TerraBukkitPlugin extends JavaPlugin {
     @Override
     public @Nullable
     ChunkGenerator getDefaultWorldGenerator(@NotNull String worldName, String id) {
-        if (id == null || id.trim().equals("")) { return null; }
+        if(id == null || id.trim().equals("")) { return null; }
         return new BukkitChunkGeneratorWrapper(generatorMap.computeIfAbsent(worldName, name -> {
             ConfigPack pack = platform.getConfigRegistry().getByID(id).orElseThrow(
                 () -> new IllegalArgumentException("No such config pack \"" + id + "\""));

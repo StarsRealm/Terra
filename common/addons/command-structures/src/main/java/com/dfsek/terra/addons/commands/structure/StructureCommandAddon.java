@@ -1,10 +1,9 @@
 package com.dfsek.terra.addons.commands.structure;
 
-import cloud.commandframework.ArgumentDescription;
 import cloud.commandframework.CommandManager;
-import cloud.commandframework.arguments.standard.EnumArgument;
-import cloud.commandframework.arguments.standard.LongArgument;
+import cloud.commandframework.component.DefaultValue;
 import cloud.commandframework.context.CommandContext;
+import cloud.commandframework.description.Description;
 
 import java.util.Random;
 
@@ -31,7 +30,7 @@ public class StructureCommandAddon implements AddonInitializer {
     private BaseAddon addon;
 
     private static Registry<Structure> getStructureRegistry(CommandContext<CommandSender> sender) {
-        return sender.getSender().getEntity().orElseThrow().world().getPack().getRegistry(Structure.class);
+        return sender.sender().getEntity().orElseThrow().world().getPack().getRegistry(Structure.class);
     }
 
     @Override
@@ -43,16 +42,20 @@ public class StructureCommandAddon implements AddonInitializer {
                 CommandManager<CommandSender> manager = event.getCommandManager();
 
                 manager.command(
-                    manager.commandBuilder("structures", ArgumentDescription.of("Manage or generate structures"))
+                    manager.commandBuilder("structures", Description.of("Manage or generate structures"))
                         .literal("generate")
                         .argument(RegistryArgument.builder("structure",
                             StructureCommandAddon::getStructureRegistry,
                             TypeKey.of(Structure.class)))
-                        .argument(LongArgument.optional("seed", 0))
-                        .argument(EnumArgument.optional(Rotation.class, "rotation", Rotation.NONE))
+                        .optional(Long.class, "seed", builder -> {
+                            builder.defaultValue(DefaultValue.constant(0L));
+                        })
+                        .optional(Rotation.class, "rotation", builder -> {
+                            builder.defaultValue(DefaultValue.constant(Rotation.NONE));
+                        })
                         .handler(context -> {
                             Structure structure = context.get("structure");
-                            Entity sender = context.getSender().getEntity().orElseThrow();
+                            Entity sender = context.sender().getEntity().orElseThrow();
                             structure.generate(
                                 sender.position().toInt(),
                                 sender.world(),
