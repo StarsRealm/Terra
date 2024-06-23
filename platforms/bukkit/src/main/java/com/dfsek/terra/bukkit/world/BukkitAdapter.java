@@ -18,6 +18,7 @@
 package com.dfsek.terra.bukkit.world;
 
 
+import io.papermc.paper.brigadier.NullCommandSender;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -198,6 +199,8 @@ public final class BukkitAdapter {
             return MinecraftServer.getServer().createCommandSourceStack();
         } else if(handle instanceof CraftEntity entity) {
             return entity.getHandle().createCommandSourceStack();
+        } else if(handle instanceof NullCommandSender) {
+            return MinecraftServer.getServer().createCommandSourceStack();
         }
         throw new RuntimeException("cant adapt bukkit sender " + handle);
     }
