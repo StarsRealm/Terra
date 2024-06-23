@@ -17,16 +17,14 @@
 
 package com.dfsek.terra.bukkit;
 
-import cloud.commandframework.SenderMapper;
-import cloud.commandframework.brigadier.CloudBrigadierManager;
-import cloud.commandframework.bukkit.CloudBukkitCapabilities;
-import cloud.commandframework.execution.ExecutionCoordinator;
-import cloud.commandframework.paper.PaperCommandManager;
 import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.paper.PaperCommandManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -92,23 +90,11 @@ public class TerraBukkitPlugin extends JavaPlugin {
     }
 
     @NotNull
-    private PaperCommandManager<CommandSender> getCommandSenderPaperCommandManager() throws Exception {
-        PaperCommandManager<CommandSender> commandManager = new PaperCommandManager<>(this,
-            ExecutionCoordinator.simpleCoordinator(),
-            SenderMapper.create(BukkitAdapter::adapt, BukkitAdapter::adapt)
-        );
-        if(commandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
-            commandManager.registerBrigadier();
-            final CloudBrigadierManager<?, ?> brigManager = commandManager.brigadierManager();
-            if(brigManager != null) {
-                brigManager.setNativeNumberSuggestions(false);
-            }
-        }
-
-        if(commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
-            commandManager.registerAsynchronousCompletions();
-        }
-        return commandManager;
+    private PaperCommandManager<com.dfsek.terra.api.command.CommandSender> getCommandSenderPaperCommandManager() throws Exception {
+        return PaperCommandManager.builder(
+                SenderMapper.create(BukkitAdapter::adapt, BukkitAdapter::adaptToCommandSourceStack))
+            .executionCoordinator(ExecutionCoordinator.simpleCoordinator())
+            .buildOnEnable(this);
     }
 
     public PlatformImpl getPlatform() {

@@ -18,7 +18,7 @@ dependencies {
     shadedApi("io.papermc", "paperlib", Versions.Bukkit.paperLib)
     shadedApi(project(":common:implementation:base"))
     shadedApi("com.google.guava", "guava", Versions.Libraries.Internal.guava)
-    shadedApi("cloud.commandframework", "cloud-paper", Versions.Libraries.cloud)
+    api(files(rootProject.file("/templibs/cloud-paper-2.0.0-rc.2-all.jar")))
     shadedApi("xyz.jpenilla", "reflection-remapper", Versions.Bukkit.reflectionRemapper)
 }
 

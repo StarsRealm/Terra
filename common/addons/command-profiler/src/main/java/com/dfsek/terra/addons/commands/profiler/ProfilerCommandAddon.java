@@ -1,7 +1,7 @@
 package com.dfsek.terra.addons.commands.profiler;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.description.Description;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.description.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

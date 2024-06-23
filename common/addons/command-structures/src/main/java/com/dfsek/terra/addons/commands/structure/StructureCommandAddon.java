@@ -1,9 +1,10 @@
 package com.dfsek.terra.addons.commands.structure;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.component.DefaultValue;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.description.Description;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.component.CommandComponent;
+import org.incendo.cloud.component.DefaultValue;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.description.Description;
 
 import java.util.Random;
 
@@ -47,12 +48,14 @@ public class StructureCommandAddon implements AddonInitializer {
                         .argument(RegistryArgument.builder("structure",
                             StructureCommandAddon::getStructureRegistry,
                             TypeKey.of(Structure.class)))
-                        .optional(Long.class, "seed", builder -> {
-                            builder.defaultValue(DefaultValue.constant(0L));
-                        })
-                        .optional(Rotation.class, "rotation", builder -> {
-                            builder.defaultValue(DefaultValue.constant(Rotation.NONE));
-                        })
+                        .optional(
+                            CommandComponent.ofType(Long.class, "seed")
+                                .defaultValue(DefaultValue.constant(0L))
+                        )
+                        .optional(
+                            CommandComponent.ofType(Rotation.class, "rotation")
+                                .defaultValue(DefaultValue.constant(Rotation.NONE))
+                        )
                         .handler(context -> {
                             Structure structure = context.get("structure");
                             Entity sender = context.sender().getEntity().orElseThrow();

@@ -18,9 +18,13 @@
 package com.dfsek.terra.bukkit.world;
 
 
+import net.minecraft.server.MinecraftServer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
+import org.bukkit.craftbukkit.command.CraftRemoteConsoleCommandSender;
+import org.bukkit.craftbukkit.command.ServerCommandSender;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.WorldInfo;
 import org.bukkit.util.Vector;
@@ -173,12 +177,29 @@ public final class BukkitAdapter {
         return Vector3.of(vector.getX(), vector.getY(), vector.getZ());
     }
 
-    public static CommandSender adapt(org.bukkit.command.CommandSender sender) {
+    public static com.dfsek.terra.api.command.CommandSender adapt(org.bukkit.command.CommandSender sender) {
         return new BukkitCommandSender(sender);
     }
 
     public static Entity adapt(org.bukkit.entity.Entity entity) {
         return new BukkitEntity(entity);
+    }
+
+    public static com.dfsek.terra.api.command.CommandSender adapt(io.papermc.paper.command.brigadier.CommandSourceStack sender) {
+        return new BukkitCommandSender(sender.getSender());
+    }
+
+    public static io.papermc.paper.command.brigadier.CommandSourceStack adaptToCommandSourceStack(
+        com.dfsek.terra.api.command.CommandSender sender) {
+        Object handle = sender.getHandle();
+        if(handle instanceof CraftRemoteConsoleCommandSender) {
+            return MinecraftServer.getServer().createCommandSourceStack();
+        } else if(handle instanceof ServerCommandSender) {
+            return MinecraftServer.getServer().createCommandSourceStack();
+        } else if(handle instanceof CraftEntity entity) {
+            return entity.getHandle().createCommandSourceStack();
+        }
+        throw new RuntimeException("cant adapt bukkit sender " + handle);
     }
 
     public static org.bukkit.command.CommandSender adapt(CommandSender sender) {

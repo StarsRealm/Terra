@@ -1,15 +1,15 @@
 package com.dfsek.terra.api.command.arguments;
 
-import cloud.commandframework.component.DefaultValue;
-import cloud.commandframework.component.TypedCommandComponent;
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.context.CommandInput;
-import cloud.commandframework.parser.ArgumentParseResult;
-import cloud.commandframework.parser.ArgumentParser;
-import cloud.commandframework.suggestion.Suggestion;
-import cloud.commandframework.suggestion.SuggestionProvider;
 import io.leangen.geantyref.TypeToken;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.component.DefaultValue;
+import org.incendo.cloud.component.TypedCommandComponent;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.suggestion.Suggestion;
+import org.incendo.cloud.suggestion.SuggestionProvider;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -115,7 +115,7 @@ public class RegistryArgument {
                 .stream()
                 .map(RegistryKey::toString)
                 .sorted()
-                .map(Suggestion::simple)
+                .map(Suggestion::suggestion)
                 .toList());
         }
     }

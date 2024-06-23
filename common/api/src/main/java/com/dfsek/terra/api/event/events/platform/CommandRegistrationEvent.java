@@ -1,6 +1,6 @@
 package com.dfsek.terra.api.event.events.platform;
 
-import cloud.commandframework.CommandManager;
+import org.incendo.cloud.CommandManager;
 
 import com.dfsek.terra.api.command.CommandSender;
 import com.dfsek.terra.api.event.events.Event;

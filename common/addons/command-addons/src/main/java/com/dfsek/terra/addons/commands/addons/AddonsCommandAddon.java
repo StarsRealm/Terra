@@ -1,7 +1,7 @@
 package com.dfsek.terra.addons.commands.addons;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.description.Description;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.description.Description;
 
 import com.dfsek.terra.addons.manifest.api.AddonInitializer;
 import com.dfsek.terra.api.Platform;
