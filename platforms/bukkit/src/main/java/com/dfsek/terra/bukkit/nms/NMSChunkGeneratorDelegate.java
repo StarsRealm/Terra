@@ -29,7 +29,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 import com.dfsek.terra.api.config.ConfigPack;
@@ -110,10 +109,10 @@ public class NMSChunkGeneratorDelegate extends ChunkGenerator {
     }
 
     @Override
-    public @NotNull CompletableFuture<ChunkAccess> fillFromNoise(@NotNull Executor executor, @NotNull Blender blender,
+    public @NotNull CompletableFuture<ChunkAccess> fillFromNoise(@NotNull Blender blender,
                                                                  @NotNull RandomState noiseConfig,
                                                                  @NotNull StructureManager structureAccessor, @NotNull ChunkAccess chunk) {
-        return vanilla.fillFromNoise(executor, blender, noiseConfig, structureAccessor, chunk)
+        return vanilla.fillFromNoise(blender, noiseConfig, structureAccessor, chunk)
             .thenApply(c -> {
                 LevelAccessor level = Reflection.STRUCTURE_MANAGER.getLevel(structureAccessor);
                 BiomeProvider biomeProvider = pack.getBiomeProvider();

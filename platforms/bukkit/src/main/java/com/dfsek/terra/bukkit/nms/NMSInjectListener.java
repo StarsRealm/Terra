@@ -16,6 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import com.dfsek.terra.api.config.ConfigPack;
 import com.dfsek.terra.bukkit.generator.BukkitChunkGeneratorWrapper;
+import com.dfsek.terra.bukkit.util.UnsafeUtil;
 
 
 public class NMSInjectListener implements Listener {
@@ -38,10 +39,10 @@ public class NMSInjectListener implements Listener {
             ChunkGenerator vanilla = serverWorld.getChunkSource().getGenerator();
             NMSBiomeProvider provider = new NMSBiomeProvider(pack.getBiomeProvider(), craftWorld.getSeed());
 
-            serverWorld.getChunkSource().chunkMap.generator = new NMSChunkGeneratorDelegate(vanilla, pack, provider, craftWorld.getSeed());
+            UnsafeUtil.putFinal(serverWorld.getChunkSource().chunkMap.worldGenContext, "generator",
+                new NMSChunkGeneratorDelegate(vanilla, pack, provider, craftWorld.getSeed()));
 
             LOGGER.info("Successfully injected into world.");
-
             INJECT_LOCK.unlock();
         }
     }

@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    paperweight.devBundle("com.starsrealm.nylon", "1.20.6-R0.4-STARSREALM-SNAPSHOT")
+    paperweight.devBundle("com.starsrealm.nylon", "1.21-R0.0.1-STARSREALM-SNAPSHOT")
     shadedApi("io.papermc", "paperlib", Versions.Bukkit.paperLib)
     shadedApi(project(":common:implementation:base"))
     shadedApi("com.google.guava", "guava", Versions.Libraries.Internal.guava)
