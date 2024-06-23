@@ -1,7 +1,9 @@
 package com.dfsek.terra.bukkit.nms;
 
+import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.chunk.status.WorldGenContext;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.event.EventHandler;
@@ -39,8 +41,18 @@ public class NMSInjectListener implements Listener {
             ChunkGenerator vanilla = serverWorld.getChunkSource().getGenerator();
             NMSBiomeProvider provider = new NMSBiomeProvider(pack.getBiomeProvider(), craftWorld.getSeed());
 
-            UnsafeUtil.putFinal(serverWorld.getChunkSource().chunkMap.worldGenContext, "generator",
-                new NMSChunkGeneratorDelegate(vanilla, pack, provider, craftWorld.getSeed()));
+            final ChunkMap chunkMap = serverWorld.getChunkSource().chunkMap;
+            final WorldGenContext worldGenContext = chunkMap.worldGenContext;
+
+            final WorldGenContext injectWorldGenContext = new WorldGenContext(
+                worldGenContext.level(),
+                new NMSChunkGeneratorDelegate(vanilla, pack, provider, craftWorld.getSeed()),
+                worldGenContext.structureManager(),
+                worldGenContext.lightEngine(),
+                worldGenContext.mainThreadMailBox()
+            );
+
+            UnsafeUtil.putFinal(serverWorld.getChunkSource().chunkMap, "worldGenContext", injectWorldGenContext);
 
             LOGGER.info("Successfully injected into world.");
             INJECT_LOCK.unlock();
